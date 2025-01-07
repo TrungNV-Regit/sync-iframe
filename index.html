@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0;
+            padding: 0;
+        }
+
+        iframe {
+            width: 48%;
+            height: 100%;
+            margin: 5px;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <div style="width: 100%; height: 800px;">
+        <iframe src="https://darling-cuchufli-47a5bf.netlify.app" title="Iframe 1" id="iframe1"></iframe>
+        <iframe src="https://darling-cuchufli-47a5bf.netlify.app" title="Iframe 2" id="iframe2"></iframe>
+    </div>
+</body>
+
+</html>
+<script>
+    const iframe1 = document.getElementById('iframe1')
+    const iframe2 = document.getElementById('iframe2')
+    const iframes = [iframe1, iframe2]
+
+    window.addEventListener('message', (event) => {
+        const { origin, data } = event
+        const senderIframe = getSender(event.source)
+        if (origin !== 'https://darling-cuchufli-47a5bf.netlify.app') return
+        if (data.action === 'changeTab' && senderIframe) {
+            const receiver = senderIframe == iframe1 ? iframe2 : iframe1
+            receiver.contentWindow.postMessage({ action: 'changeTab', tab_key: data.tab_key }, '*')
+        }
+    })
+
+    const getSender = (source) => {
+        return iframes.find(item => {
+            return item.contentWindow == source
+        })
+    }
+</script>
